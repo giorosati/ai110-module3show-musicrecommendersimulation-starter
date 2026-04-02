@@ -17,17 +17,25 @@ Replace this paragraph with your own summary of what your version does.
 
 ## How The System Works
 
-Explain your design in plain language.
+Design Explanation
+Each Song stores seven attributes: categorical descriptors genre and mood, and numeric audio features energy, acousticness, valence, danceability, and tempo_bpm. The UserProfile stores matching preferences: favorite_genre, favorite_mood, target_energy, and a likes_acoustic boolean.
 
-Some prompts to answer:
+The Recommender scores each song using weighted proximity — for numeric features, 1 - |song_value - user_target| rewards closeness over raw magnitude. Categorical features contribute 1.0 for a match, 0.0 otherwise. Weights reflect signal strength:
 
-- What features does each `Song` use in your system
-  - For example: genre, mood, energy, tempo
-- What information does your `UserProfile` store
-- How does your `Recommender` compute a score for each song
-- How do you choose which songs to recommend
 
-You can include a simple diagram or bullet list if helpful.
+score = 0.30 × energy_proximity
+      + 0.25 × genre_match
+      + 0.20 × mood_match
+      + 0.15 × acousticness_proximity
+      + 0.05 × valence_proximity
+      + 0.03 × danceability_proximity
+      + 0.02 × tempo_proximity
+Every song is scored independently, then sorted descending, and the top k are returned.
+
+Real-World vs. This Version
+Real platforms like Spotify infer preferences from implicit behavior — skips, replays, saves — and combine collaborative filtering, deep audio models, and real-time context signals to recommend songs users didn't know they wanted.
+
+This version prioritizes transparency over sophistication. Preferences are declared explicitly, every score is traceable to specific features and weights, and there is no learning loop. It is an honest content-based recommender — the right foundation for understanding recommendation mechanics before adding behavioral complexity.
 
 ---
 
