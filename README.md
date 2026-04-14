@@ -123,30 +123,29 @@ Combines reflection and model card framing from the Module 3 guidance. :contentR
 
 Give your recommender a name, for example:
 
-> VibeFinder 1.0
+Music Curator v0.1
 
 ---
 
 ## 2. Intended Use
 
-- What is this system trying to do
-- Who is it for
-
-Example:
-
-> This model suggests 3 to 5 songs from a small catalog based on a user's preferred genre, mood, and energy level. It is for classroom exploration only, not for real users.
+This recommender suggests up to 10 songs from a growing catalog based on a user's preferred genre, mood, energy level, and acoustic preference. It is designed as a functional content-based filtering system intended to scale as the catalog expands. While it currently uses a small dataset for development and testing, it is built with real recommendation logic and is not limited to educational use.
 
 ---
 
 ## 3. How It Works (Short Explanation)
 
-Describe your scoring logic in plain language.
+How Real-World Recommenders Work
 
-- What features of each song does it consider
-- What information about the user does it use
-- How does it turn those into a number
+Platforms like Spotify and YouTube predict what users will love by combining two approaches. Collaborative filtering analyzes the behavior of millions of users — skips, replays, saves, and playlist adds — to find listeners with similar taste and surface songs those listeners love. Content-based filtering takes a different angle, analyzing the attributes of the music itself — tempo, energy, mood, genre — to find songs that sound and feel similar to ones you already enjoy. Real platforms layer both approaches together, adding contextual signals like time of day and device type, and use reinforcement learning to continuously improve based on what users actually do next.
 
-Try to avoid code in this section, treat it like an explanation to a non programmer.
+What This Version Prioritizes
+
+This simulation uses a pure content-based approach. Rather than inferring preferences from behavior, the user declares them explicitly through a profile that stores a favorite genre, a preferred mood, a target energy level, and an acoustic preference. Each song is scored by measuring how close its attributes are to those targets using a weighted proximity formula — features with stronger predictive signal, like energy and genre, carry more weight than features that are more redundant, like danceability and tempo. Every score is fully traceable, making this version transparent and easy to reason about, at the cost of the serendipity and personalization depth that behavioral data provides.
+
+Each Song in the catalog is described by seven attributes. Two are categorical: genre (such as pop, lofi, rock, or jazz) and mood (such as happy, chill, intense, or focused). Five are numeric and measured on a 0 to 1 scale: energy (overall intensity), acousticness (organic vs. electronic sound), valence (musical positivity), and danceability (suitability for dancing). tempo_bpm is also numeric but measured in beats per minute, so it is normalized to a 0 to 1 scale before scoring.
+
+The UserProfile stores four preference fields that map directly to song attributes: favorite_genre, favorite_mood, target_energy (a number between 0 and 1), and likes_acoustic (a true or false flag that is converted to a target acousticness value of 0.85 for acoustic preference or 0.15 for electronic preference). This direct mapping is what makes weighted proximity scoring possible — every user preference has a corresponding song attribute to compare agains
 
 ---
 
