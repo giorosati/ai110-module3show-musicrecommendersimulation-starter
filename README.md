@@ -17,25 +17,37 @@ Replace this paragraph with your own summary of what your version does.
 
 ## How The System Works
 
-Design Explanation
-Each Song stores seven attributes: categorical descriptors genre and mood, and numeric audio features energy, acousticness, valence, danceability, and tempo_bpm. The UserProfile stores matching preferences: favorite_genre, favorite_mood, target_energy, and a likes_acoustic boolean.
+**Design Explanation**
 
-The Recommender scores each song using weighted proximity — for numeric features, 1 - |song_value - user_target| rewards closeness over raw magnitude. Categorical features contribute 1.0 for a match, 0.0 otherwise. Weights reflect signal strength:
+Each `Song` stores seven attributes: categorical descriptors `genre` and `mood`, and numeric audio features `energy`, `acousticness`, `valence`, `danceability`, and `tempo_bpm`. The `UserProfile` stores matching preferences: `favorite_genre`, `favorite_mood`, `target_energy`, a `likes_acoustic` boolean, `target_valence`, and `target_danceability`.
 
+**Algorithm Recipe**
 
-score = 0.30 × energy_proximity
-      + 0.25 × genre_match
-      + 0.20 × mood_match
-      + 0.15 × acousticness_proximity
-      + 0.05 × valence_proximity
-      + 0.03 × danceability_proximity
-      + 0.02 × tempo_proximity
-Every song is scored independently, then sorted descending, and the top k are returned.
+Each song is scored by combining flat points for categorical matches with proximity points for numeric features. Proximity is calculated as `max_points × (1 - |song_value - user_target|)`, which awards full points for a perfect match and decreases as values diverge.
 
-Real-World vs. This Version
+```
+score = 2.0  × genre_match              (1.0 if match, 0.0 if not)
+      + 1.0  × mood_match               (1.0 if match, 0.0 if not)
+      + 3.0  × (1 - |song.energy        - target_energy|)
+      + 1.5  × (1 - |song.acousticness  - acousticness_target|)
+      + 0.5  × (1 - |song.valence       - target_valence|)
+      + 0.3  × (1 - |song.danceability  - target_danceability|)
+```
+
+Maximum possible score: **8.3 points**. `acousticness_target` is `0.85` if `likes_acoustic` is `True`, `0.15` if `False`. Every song is scored independently, then sorted descending, and the top `k` results are returned.
+
+**Real-World vs. This Version**
+
 Real platforms like Spotify infer preferences from implicit behavior — skips, replays, saves — and combine collaborative filtering, deep audio models, and real-time context signals to recommend songs users didn't know they wanted.
 
 This version prioritizes transparency over sophistication. Preferences are declared explicitly, every score is traceable to specific features and weights, and there is no learning loop. It is an honest content-based recommender — the right foundation for understanding recommendation mechanics before adding behavioral complexity.
+
+**Potential Biases**
+
+- **Genre over-prioritization** — with +2.0 points, a genre match can outweigh several strong numeric matches. A song that perfectly fits the user's energy, mood, and acoustic preference but belongs to a different genre may rank lower than a mediocre match in the right genre.
+- **Catalog skew** — the dataset has 3 lofi songs and only 1 each of most other genres. If a user prefers lofi, they have more candidates to match against than a user who prefers blues or reggae.
+- **Declared vs. actual preferences** — the system trusts the user profile completely. If a user says they prefer high energy but actually enjoys calm music in the evening, the recommender has no way to detect or adapt to that gap.
+- **No diversity enforcement** — the ranking rule returns the top `k` scores with no constraint on variety, so a user could receive 5 songs with nearly identical profiles.
 
 ---
 
