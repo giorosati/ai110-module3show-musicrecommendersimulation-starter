@@ -99,6 +99,7 @@ The first test used a pop/happy user profile to verify the scorer was returning 
 - **Target Valence:** 0.82
 - **Target Danceability:** 0.80
 
+Here is the output from test 1:
 ![Top 5 recommendations for pop/happy profile](docs/recommended_songs_original.png)
 
 Sunrise City ranked first with a score of 7.54 / 8.30 — the only song in the catalog that matched both genre (pop) and mood (happy), earning the full +3.0 categorical bonus. The energy (0.82), valence (0.84), and danceability (0.79) were all close to the user targets, producing strong proximity scores across every feature. Gym Hero ranked second despite missing the mood match, because its energy (0.93) and genre (pop) kept its total score competitive.
@@ -116,6 +117,7 @@ The second test used a profile substantially different from Test 1 to verify tha
 - **Target Valence:** 0.65 _(changed from 0.82)_
 - **Target Danceability:** 0.35 _(changed from 0.80)_
 
+Here is the output from test 2:
 ![Top 5 recommendations for jazz/peaceful profile](docs/recommended_songs_test2.png)
 
 **What changed and why it matters:** Every feature was moved toward the opposite end of the scale. Flipping `likes_acoustic` from `False` to `True` shifts the acousticness target from `0.15` to `0.85`, which is the single largest swing in the scoring formula (+1.5 max points). Dropping `target_energy` from `0.80` to `0.25` demotes all high-energy songs that previously ranked well, since energy carries the heaviest numeric weight (+3.0 max points).
