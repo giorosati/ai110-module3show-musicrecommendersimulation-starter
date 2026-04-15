@@ -30,13 +30,49 @@ def main() -> None:
     # --- Test Profile 2: Jazz / Peaceful ---
     # Low energy, acoustic, mellow listener. Substantially different from Profile 1.
     # Expected top results: Coffee Shop Stories, Moonlight Sonata Dreams, Old Oak Road
+    # user_prefs = {
+    #     "genre":               "jazz",
+    #     "mood":                "peaceful",
+    #     "target_energy":       0.25,
+    #     "likes_acoustic":      True,
+    #     "target_valence":      0.65,
+    #     "target_danceability": 0.35,
+    # }
+
+    # --- Test Profile 3: High-Energy EDM ---
+    # Maximum energy, electronic, built for dancing.
+    # Expected top results: Voltage Rush, Gym Hero, Storm Runner
+    # user_prefs = {
+    #     "genre":               "edm",
+    #     "mood":                "energetic",
+    #     "target_energy":       0.95,
+    #     "likes_acoustic":      False,
+    #     "target_valence":      0.60,
+    #     "target_danceability": 0.90,
+    # }
+
+    # --- Test Profile 4: Chill Lofi ---
+    # Low energy, acoustic, focused study listener.
+    # Expected top results: Focus Flow, Midnight Coding, Library Rain
+    # user_prefs = {
+    #     "genre":               "lofi",
+    #     "mood":                "focused",
+    #     "target_energy":       0.40,
+    #     "likes_acoustic":      True,
+    #     "target_valence":      0.58,
+    #     "target_danceability": 0.60,
+    # }
+
+    # --- Test Profile 5: Deep Intense Rock ---
+    # High energy, aggressive, low valence listener.
+    # Expected top results: Storm Runner, Iron Horizon, Night Drive Loop
     user_prefs = {
-        "genre":               "jazz",
-        "mood":                "peaceful",
-        "target_energy":       0.25,
-        "likes_acoustic":      True,
-        "target_valence":      0.65,
-        "target_danceability": 0.35,
+        "genre":               "rock",
+        "mood":                "intense",
+        "target_energy":       0.90,
+        "likes_acoustic":      False,
+        "target_valence":      0.45,
+        "target_danceability": 0.65,
     }
 
     k = 5

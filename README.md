@@ -118,6 +118,69 @@ The second test used a profile substantially different from Test 1 to verify tha
 
 ---
 
+### Test 3 — High-Energy EDM Profile
+
+The third test used a maximum-energy, high-danceability profile to verify the scorer correctly favors electronic, driving tracks:
+
+- **Genre:** edm
+- **Mood:** energetic
+- **Target Energy:** 0.95
+- **Likes Acoustic:** False _(acousticness target = 0.15)_
+- **Target Valence:** 0.60
+- **Target Danceability:** 0.90
+
+### Here is the output from test 3:
+
+![Top 5 recommendations for high-energy EDM profile](docs/recommended_songs_test3.png)
+
+**What changed and why it matters:** Energy was pushed to near maximum (0.95) and danceability to 0.90, the highest targets of any profile tested. `likes_acoustic` remains `False`, keeping the acousticness target at 0.15 and penalizing any organic or acoustic tracks. The EDM genre match will reward Voltage Rush exclusively, while energy and danceability proximity will pull in other high-intensity electronic and pop tracks.
+
+**Expected new top results:** Voltage Rush (edm genre match + energy 0.94 + danceability 0.91), Gym Hero (energy 0.93 + danceability 0.88), Storm Runner (energy 0.91). Songs that ranked well in Test 2 — Coffee Shop Stories, Moonlight Sonata Dreams, Old Oak Road — should rank at the bottom due to low energy and high acousticness.
+
+---
+
+### Test 4 — Chill Lofi Profile
+
+The fourth test used a low-energy, acoustic, study-focused profile to verify the scorer correctly surfaces calm, textured tracks:
+
+- **Genre:** lofi
+- **Mood:** focused
+- **Target Energy:** 0.40
+- **Likes Acoustic:** True _(acousticness target = 0.85)_
+- **Target Valence:** 0.58
+- **Target Danceability:** 0.60
+
+### Here is the output from test 4:
+
+![Top 5 recommendations for chill lofi profile](docs/recommended_songs_test4.png)
+
+**What changed and why it matters:** This profile shares the acoustic preference of Test 2 but shifts genre to lofi and mood to focused. With 3 lofi songs in the catalog (Focus Flow, Midnight Coding, Library Rain), the genre bonus gives this profile the largest pool of genre-matched candidates of any test. The moderate danceability target (0.60) also separates it from the jazz profile, which sat at 0.35.
+
+**Expected new top results:** Focus Flow (lofi genre match + mood focused + acousticness 0.78 + energy 0.40), Midnight Coding (lofi genre match + acousticness 0.71 + energy 0.42), Library Rain (lofi genre match + acousticness 0.86 + energy 0.35). High-energy tracks like Voltage Rush and Iron Horizon should rank at the bottom.
+
+---
+
+### Test 5 — Deep Intense Rock Profile
+
+The fifth test used a high-energy, low-valence, aggressive profile to verify the scorer correctly surfaces hard-driving tracks:
+
+- **Genre:** rock
+- **Mood:** intense
+- **Target Energy:** 0.90
+- **Likes Acoustic:** False _(acousticness target = 0.15)_
+- **Target Valence:** 0.45
+- **Target Danceability:** 0.65
+
+### Here is the output from test 5:
+
+![Top 5 recommendations for deep intense rock profile](docs/recommended_songs_test5.png)
+
+**What changed and why it matters:** This profile shares high energy with Test 3 (EDM) but shifts genre to rock, mood to intense, and pulls valence down to 0.45 — the lowest of any profile tested. Low valence combined with high energy targets a darker, more aggressive sound. Unlike the EDM profile which maximized danceability (0.90), this profile sits at a moderate 0.65, reflecting that rock listeners don't always prioritize danceability.
+
+**Expected new top results:** Storm Runner (rock genre match + mood intense + energy 0.91), Iron Horizon (energy 0.97 + low valence 0.31 + low acousticness 0.04), Night Drive Loop (energy 0.75 + low valence 0.49). Acoustic and low-energy tracks like Moonlight Sonata Dreams, Library Rain, and Old Oak Road should rank at the bottom.
+
+---
+
 ## Limitations and Risks
 
 - **Small catalog** — with only 20 songs, many user profiles will return the same top results regardless of subtle preference differences. A real recommender needs thousands of songs to produce meaningfully varied recommendations.
