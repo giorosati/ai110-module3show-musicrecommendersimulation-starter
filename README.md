@@ -86,13 +86,41 @@ You can add more tests in `tests/test_recommender.py`.
 
 ---
 
-## Experiments You Tried
+## Evaluation
 
-Use this section to document the experiments you ran. For example:
+### Test 1 — Original Pop / Happy Profile
 
-- What happened when you changed the weight on genre from 2.0 to 0.5
-- What happened when you added tempo or valence to the score
-- How did your system behave for different types of users
+The first test used a pop/happy user profile to verify the scorer was returning sensible results:
+
+- **Genre:** pop
+- **Mood:** happy
+- **Target Energy:** 0.80
+- **Likes Acoustic:** False
+- **Target Valence:** 0.82
+- **Target Danceability:** 0.80
+
+![Top 5 recommendations for pop/happy profile](docs/recommended_songs_original.png)
+
+Sunrise City ranked first with a score of 7.54 / 8.30 — the only song in the catalog that matched both genre (pop) and mood (happy), earning the full +3.0 categorical bonus. The energy (0.82), valence (0.84), and danceability (0.79) were all close to the user targets, producing strong proximity scores across every feature. Gym Hero ranked second despite missing the mood match, because its energy (0.93) and genre (pop) kept its total score competitive.
+
+---
+
+### Test 2 — Jazz / Peaceful Profile
+
+The second test used a profile substantially different from Test 1 to verify that the scorer responds correctly to opposite preferences:
+
+- **Genre:** jazz _(changed from pop)_
+- **Mood:** peaceful _(changed from happy)_
+- **Target Energy:** 0.25 _(changed from 0.80)_
+- **Likes Acoustic:** True _(changed from False — acousticness target flips to 0.85)_
+- **Target Valence:** 0.65 _(changed from 0.82)_
+- **Target Danceability:** 0.35 _(changed from 0.80)_
+
+![Top 5 recommendations for jazz/peaceful profile](docs/recommended_songs_test2.png)
+
+**What changed and why it matters:** Every feature was moved toward the opposite end of the scale. Flipping `likes_acoustic` from `False` to `True` shifts the acousticness target from `0.15` to `0.85`, which is the single largest swing in the scoring formula (+1.5 max points). Dropping `target_energy` from `0.80` to `0.25` demotes all high-energy songs that previously ranked well, since energy carries the heaviest numeric weight (+3.0 max points).
+
+**Expected new top results:** Coffee Shop Stories (jazz genre match + acousticness 0.89 + energy 0.37), Moonlight Sonata Dreams (peaceful mood match + acousticness 0.98 + energy 0.22), Old Oak Road (acousticness 0.93 + energy 0.33). Songs that ranked highly in Test 1 — Gym Hero, Storm Runner, Voltage Rush — should drop to the bottom due to high energy and low acousticness.
 
 ---
 
@@ -141,7 +169,7 @@ Music Curator v0.1
 
 ## 2. Intended Use
 
-This recommender suggests up to 10 songs from a growing catalog based on a user's preferred genre, mood, energy level, and acoustic preference. It is designed as a functional content-based filtering system intended to scale as the catalog expands. While it currently uses a small dataset for development and testing, it is built with real recommendation logic and is not limited to educational use.
+This recommender suggests 5 songs from a growing catalog based on a user's preferred genre, mood, energy level, and acoustic preference. It is designed as a functional content-based filtering system intended to scale as the catalog expands. While it currently uses a small dataset for development and testing, it is built with real recommendation logic and is not limited to educational use.
 
 ---
 
