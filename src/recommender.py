@@ -68,8 +68,41 @@ def load_songs(csv_path: str) -> List[Dict]:
     print(f"{len(songs)} songs loaded.")
     return songs
 
+def get_max_score() -> float:
+    """Return the maximum possible score for the active weight configuration."""
+    # Keep this in sync with the active weight block in score_song.
+
+    # Standard weights (max score: 8.3)
+    return 2.0 + 1.0 + 3.0 + 1.5 + 0.5 + 0.3
+
+    # TEMPORARY — Sensitivity test: double energy, halve genre (max score: 10.3)
+    # return 1.0 + 1.0 + 6.0 + 1.5 + 0.5 + 0.3  # genre + mood + energy + acousticness + valence + danceability
+
+
 def score_song(song: Dict, user_prefs: Dict) -> Tuple[float, str]:
     """Score one song against a user profile and return a (score, explanation) tuple."""
+
+    # --- CONFIGURATION: comment out one block to switch ---
+
+    # Standard weights (max score: 8.3)
+    W_GENRE        = 2.0
+    W_MOOD         = 1.0
+    W_ENERGY       = 3.0
+    W_ACOUSTICNESS = 1.5
+    W_VALENCE      = 0.5
+    W_DANCEABILITY = 0.3
+
+    # TEMPORARY — Sensitivity test: double energy, halve genre (max score: 10.3)
+    # Remove this block and restore Standard weights when testing is complete.
+    # W_GENRE        = 1.0
+    # W_MOOD         = 1.0
+    # W_ENERGY       = 6.0
+    # W_ACOUSTICNESS = 1.5
+    # W_VALENCE      = 0.5
+    # W_DANCEABILITY = 0.3
+
+    # --- END CONFIGURATION ---
+
     genre               = user_prefs.get("genre", "")
     mood                = user_prefs.get("mood", "")
     target_energy       = float(user_prefs.get("target_energy", 0.65))
@@ -81,26 +114,26 @@ def score_song(song: Dict, user_prefs: Dict) -> Tuple[float, str]:
     reasons = []
 
     if song["genre"] == genre:
-        score += 2.0
-        reasons.append("genre match (+2.0)")
+        score += W_GENRE
+        reasons.append(f"genre match (+{W_GENRE})")
 
     if song["mood"] == mood:
-        score += 1.0
-        reasons.append("mood match (+1.0)")
+        score += W_MOOD
+        reasons.append(f"mood match (+{W_MOOD})")
 
-    energy_pts = 3.0 * (1 - abs(song["energy"] - target_energy))
+    energy_pts = W_ENERGY * (1 - abs(song["energy"] - target_energy))
     score += energy_pts
     reasons.append(f"energy proximity (+{energy_pts:.2f})")
 
-    acoustic_pts = 1.5 * (1 - abs(song["acousticness"] - acousticness_target))
+    acoustic_pts = W_ACOUSTICNESS * (1 - abs(song["acousticness"] - acousticness_target))
     score += acoustic_pts
     reasons.append(f"acousticness proximity (+{acoustic_pts:.2f})")
 
-    valence_pts = 0.5 * (1 - abs(song["valence"] - target_valence))
+    valence_pts = W_VALENCE * (1 - abs(song["valence"] - target_valence))
     score += valence_pts
     reasons.append(f"valence proximity (+{valence_pts:.2f})")
 
-    dance_pts = 0.3 * (1 - abs(song["danceability"] - target_danceability))
+    dance_pts = W_DANCEABILITY * (1 - abs(song["danceability"] - target_danceability))
     score += dance_pts
     reasons.append(f"danceability proximity (+{dance_pts:.2f})")
 
